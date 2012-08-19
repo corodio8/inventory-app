@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+good_user:
+  fname: good
+  lname: user
+  uname: guser
+  position: god of light
+
+bad_user
+  fname: bad
+  lname: user
+  uname:
+  position: broken toy

@@ -1,0 +1,30 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Serial no:</b>
+  <%= @computer.serial_no %>
+</p>
+
+<p>
+  <b>Asset tag:</b>
+  <%= @computer.asset_tag %>
+</p>
+
+<p>
+  <b>Computer name:</b>
+  <%= @computer.computer_name %>
+</p>
+
+<p>
+  <b>Make:</b>
+  <%= @computer.make %>
+</p>
+
+<p>
+  <b>Model:</b>
+  <%= @computer.model %>
+</p>
+
+
+<%= link_to 'Edit', edit_computer_path(@computer) %> |
+<%= link_to 'Back', computers_path %>

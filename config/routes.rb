@@ -1,4 +1,15 @@
 InventoryApp::Application.routes.draw do
+  resources :assignments do
+    get :assign_computer_to_user
+    get :happy, :on => :member
+  end
+
+  resources :computers
+
+  resources :users do
+    get :attach, :on => :member
+  end
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 

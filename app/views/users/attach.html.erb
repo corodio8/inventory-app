@@ -1,0 +1,52 @@
+<h1>Assign Computer to User</h1>
+
+<%= form_for(@assignment) do |f| %>
+  <% if @assignment.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@assignment.errors.count, "error") %> prohibited this computer from being saved:</h2>
+      <ul>
+      <% @assignment.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+<% end %>
+
+
+<table>
+  <tr>
+    <th>Serial no</th>
+    <th>Asset tag</th>
+    <th>Computer name</th>
+    <th>Make</th>
+    <th>Model</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @computers.each do |computer| %>
+    <tr class="<%= cycle('list-line-odd', 'list-line-even')  %>">
+    <td><%= computer.serial_no %></td>
+    <td><%= computer.asset_tag %></td>
+    <td><%= computer.computer_name %></td>
+    <td><%= computer.make %></td>
+    <td><%= computer.model %></td>
+
+
+    <td><%= link_to 'assign', 
+      #{:controller => :assignments, :action => :assign_computer_to_user},
+      happy_assignments_path(
+      :user_id => @user.id, 
+      :computer_id => computer.id, 
+      :assign_date => Date.today) %> </td>
+
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Computer', new_computer_path %>
