@@ -1,4 +1,4 @@
-<h1>Listing assignments</h1>
+<h1>Listing Historical Assignments</h1>
 
 <table>
   <tr>
@@ -9,6 +9,7 @@
     <th></th>
     <th></th>
   </tr>
+  <%= Assignment.where(:user_id => '1').last.user_id %>
 
 <% @assignments.each do |assignment| %>
   <tr class="<%= cycle('list-line-odd', 'list-line-even') %>">

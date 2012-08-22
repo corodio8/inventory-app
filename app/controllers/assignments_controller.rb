@@ -3,39 +3,57 @@ class AssignmentsController < ApplicationController
   # GET /assignments
   # GET /assignments.json
   
+  #shows currently assigned assets
   def index
-    @assignments = Assignment.all
-
+    @assignments = Array.new
+    #for each asset, find all assignments applied, order by date and select entry, which would be current
+    Computer.all.each do |asset|
+      @assignments <<  Assignment.where(:computer_id => asset.id).order("assign_date ASC").last
+    end
     respond_to do |format|
       format.html # index.html.erb
       format.json { render json: @assignments }
     end
   end
 
-  #test action
-  def happy
+  #shows ALL past assignments
+  def history
+    @assignments = Assignment.order("assign_date ASC")
   end
 
-  #assigns a computer object to selected user with current date
-  def assign_computer_to_user
-    #tests if assignment is current
-    if Assignment.where(:user_id => params[:user_id],
-                        :computer_id => params[:computer_id] ).first.nil?
-     
-   @assignment = Assignment.new                                               
-   @assignment.update_attributes(:user_id => params[:user_id],
+  #test action
+  def debug
+    @assignments = Assignment.all
+  end
+
+  #assigns a computer object to selected user with assign_date
+  def new
+    
+    #searches computer_id and then sorts by assign_date
+    #then checks to see if that assignment matches user_id, if its does then 
+    #it is already current and rejects assignment request
+    
+    #finds the latest assignment for particular computer id and assigns it, otherwise fail.
+    if (@assignment = Assignment.where(:computer_id => params[:computer_id]).order("assign_date ASC").last)
+
+      #checks if user_id matches current user_id, if so then record is already current and reject assignment
+      if not @assignment.user_id == params[:user_id]
+        @assignment = Assignment.new
+
+        @assignment.update_attributes(:user_id => params[:user_id],
                                  :computer_id => params[:computer_id],
                                  :assign_date => params[:assign_date])
-
-      respond_to do |format|
-        format.html { redirect_to assignments_url }
-        format.json { head :no_content }
+        respond_to do |format|
+          format.html { redirect_to assignments_url }
+          format.json { head :no_content }
+        end
+      else
+        flash[:notice] = ("Could not assign asset, already current")
+        redirect_to attach_user_path(params[:user_id], :notice => 'Invalid') 
       end
     else
-      #respond_to do |format|
-        #format.html { redirect_to assignments_url }
-        #format.json { head :no_content }
-      #end
+      flash[:notice] = ("Could not assign asset, already current")
+      redirect_to attach_user_path(params[:user_id], :notice => 'Invalid') 
     end
   end
 
@@ -53,14 +71,14 @@ class AssignmentsController < ApplicationController
 
   # GET /assignments/new
   # GET /assignments/new.json
-  def new
-    @assignment = Assignment.new
-
-    respond_to do |format|
-      format.html # new.html.erb
-      format.json { render json: @assignment }
-    end
-  end
+#  def new
+#    @assignment = Assignment.new
+#
+#    respond_to do |format|
+#      format.html # new.html.erb
+#      format.json { render json: @assignment }
+#    end
+#  end
 
   # GET /assignments/1/edit
   def edit

@@ -1,7 +1,12 @@
 InventoryApp::Application.routes.draw do
   resources :assignments do
-    get :assign_computer_to_user
-    get :happy, :on => :member
+    member do
+      get :assign_computer_to_user
+    end
+    collection do
+      get :debug
+      get :history
+    end
   end
 
   resources :computers
@@ -9,6 +14,8 @@ InventoryApp::Application.routes.draw do
   resources :users do
     get :attach, :on => :member
   end
+
+  root :to => 'assignments#index'
 
   # The priority is based upon order of creation:
   # first created -> highest priority.

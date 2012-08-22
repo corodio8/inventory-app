@@ -1,0 +1,51 @@
+
+body {
+  font-family: "Amaranth", sans-serif 10px;
+}
+
+ul {
+  list-style: none inside none;
+  vertical-align: baseline;
+}
+
+#banner {
+  background: #9c9;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  border-bottom: 10px;
+  font: small-caps 40px/40px "Arial";
+  color: #282;
+  text-align: center;
+}
+
+#top_nav {
+  background-color: #000000;
+  color: #FF8C00;
+  font-family: "Amaranth", sans-serif 10px;
+  padding: 10px 0px;
+  position: fixed;
+  top: 0px;
+  width: 100%;
+  z-index: 999;
+
+}
+
+#top_nav ul {
+  margin: 0px auto;
+  width: 75%;
+  vertical-align: baseline;
+}
+
+#top_nav li {
+  display: inline
+}
+
+#top_nav a {
+  text-decoration: none;
+  color: #787878;
+}
+
+#top_nav a:hover {
+  color: #FFCC00;
+}
+
