@@ -1,0 +1,19 @@
+<%= form_tag( show_report_assignments_path, :method => 'get') do %>
+
+  <div class="field">
+    <%= label_tag 'First Name' %><br />
+    <%= text_field_tag :fname %><br />
+
+    <%= label_tag 'Last Name' %><br />
+    <%= text_field_tag :lname %><br />
+
+    <%= label_tag 'Start Date (MM-DD-YYYY)' %><br />
+    <%= text_field_tag :start_date %><br />
+
+    <%= label_tag 'End Date (MM-DD-YYYY' %><br />
+    <%= text_field_tag :end_date %><br />
+  </div>
+  <div class="action">
+    <%= submit_tag "Generate Report" %>
+  </div>
+<% end %>  

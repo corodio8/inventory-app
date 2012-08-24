@@ -3,7 +3,7 @@ class ComputersController < ApplicationController
   # GET /computers
   # GET /computers.json
   def index
-    @computers = Computer.all
+    @computers = Computer.order("asset_tag ASC")
 
     respond_to do |format|
       format.html # index.html.erb
@@ -45,6 +45,18 @@ class ComputersController < ApplicationController
 
     respond_to do |format|
       if @computer.save
+        #Checks if default user exists, if not, then create
+        default_user = User.where(:uname => User.get_default).first_or_create(:fname => 'IT', :lname => 'Dept')
+        params = {
+            "user_id" => default_user.id,
+            "computer_id" => @computer.id,
+            "assign_date" => Date.today
+        }
+
+        Assignment.new.update_attributes(:user_id => default_user.id,
+                                 :computer_id => @computer.id,
+                                 :assign_date => Date.today)
+
         format.html { redirect_to @computer, notice: 'Computer was successfully created.' }
         format.json { render json: @computer, status: :created, location: @computer }
       else

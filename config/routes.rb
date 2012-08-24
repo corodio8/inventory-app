@@ -6,6 +6,8 @@ InventoryApp::Application.routes.draw do
     collection do
       get :debug
       get :history
+      get :report_query
+      get :show_report
     end
   end
 

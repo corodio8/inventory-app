@@ -32,7 +32,7 @@ class AssignmentsController < ApplicationController
     #searches computer_id and then sorts by assign_date
     #then checks to see if that assignment matches user_id, if its does then 
     #it is already current and rejects assignment request
-    
+
     #finds the latest assignment for particular computer id and assigns it, otherwise fail.
     if (@assignment = Assignment.where(:computer_id => params[:computer_id]).order("assign_date ASC").last)
 
@@ -126,6 +126,57 @@ class AssignmentsController < ApplicationController
     respond_to do |format|
       format.html { redirect_to assignments_url }
       format.json { head :no_content }
+  end
+  end
+  
+  def report_query
+  
+    respond_to do |format|
+      format.html
+      format.json { head :no_content }
+    end
+  end
+
+  def show_report_temp_debug
+    @user_id = User.where(:fname => params[:fname]).first
+    @assignments = Assignment.where(:user_id => @user_id)
+  end
+  
+  def show_report
+    #initializes @assignments to nil
+    @assignments = nil
+
+    #filter by first name
+    if !params[:fname].empty?
+      @user_id = User.where(:fname => params[:fname]).first
+      if @assignments
+        @assignments = @assignments.where(:user_id => @user_id)
+      else
+        @assignments = Assignment.where(:user_id => @user_id)
+      end
+    end
+
+    #filter by last name
+    if !params[:lname].empty?
+      @user_id = User.where(:lname => params[:lname]).first
+      if @assignments
+        @assignments = @assignments.where(:user_id => @user_id)
+      else
+        @assignments = Assignment.where(:user_id => @user_id)
+      end
+    end
+
+    #filter by range
+    #check that BOTH exist, else fail
+    if !(params[:start_date] && params[:end_date]).empty?
+      #check if assignment has been initialized, if not then create, if so then filter
+      start_date = Date.strptime(params[:start_date], '%m/%d/%Y')
+      end_date = Date.strptime(params[:end_date], '%m/%d/%Y')
+      if @assignments
+        @assignments = @assignments.where(:assign_date => start_date..end_date)
+      else
+        @assignments = Assignment.where(:assign_date => start_date..end_date)
+      end
     end
   end
 end
