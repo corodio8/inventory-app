@@ -36,3 +36,9 @@ gem 'jquery-rails'
 
 # To use debugger
 # gem 'debugger'
+
+#gem 'al-to_xls', '~> 0.2.1'
+#gem "to-csv", "~> 1.0.3"
+#gem 'to_xls', '~> 1.5.1'
+
+gem 'rspec', :group => :test

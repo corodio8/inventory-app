@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:o="urn:schemas-microsoft-com:office:office"
+  xmlns:x="urn:schemas-microsoft-com:office:excel"
+  xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:html="http://www.w3.org/TR/REC-html40">
+  <Worksheet ss:Name="Sheet1">
+    <Table>
+      <Row>
+        <% @report[0].each do |hash| %>
+          <Cell><Data ss:Type="String"><%= hash.key %></Data></Cell>
+        <% end %>
+      </Row>
+    <% @report.each do |report| %>
+      <Row>
+        <% report.each do |hash| %>
+          <Cell><Data ss:Type="String"><%= hash.value %></Data></Cell>
+        <% end %>
+      </Row>
+    <% end %>
+    </Table>
+  </Worksheet>
+</Workbook>

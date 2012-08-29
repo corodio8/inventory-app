@@ -13,6 +13,7 @@ class AssignmentsController < ApplicationController
     respond_to do |format|
       format.html # index.html.erb
       format.json { render json: @assignments }
+      format.xls { send_data @assignments.to_xls }
     end
   end
 
@@ -142,7 +143,7 @@ class AssignmentsController < ApplicationController
     @assignments = Assignment.where(:user_id => @user_id)
   end
   
-  def show_report
+  def report
     #initializes @assignments to nil
     @assignments = nil
 
@@ -177,6 +178,57 @@ class AssignmentsController < ApplicationController
       else
         @assignments = Assignment.where(:assign_date => start_date..end_date)
       end
+    elsif params[:start_date].empty? && !params[:end_date].empty?
+      end_date = Date.strptime(params[:end_date], '%m/%d/%Y')
+      if @assignments
+        @assignments = @assignments.where(:assign_date => ('01/01/1337'.to_date)..end_date)
+      else
+        @assignments = Assignment.where(:assign_date => ('01/01/1337'.to_date)..end_date)
+      end
+    elsif !params[:start_date].empty? && params[:end_date].empty?
+      start_date = Date.strptime(params[:start_date], '%m/%d/%Y')
+      if @assignments
+        @assignments = @assignments.where(:assign_date => start_date..('01/01/4000'.to_date))
+      else
+        @assignments = Assignment.where(:assign_date => start_date..('01/01/4000'.to_date))
+      end
+    end
+  
+    @report = []
+    if params[:format] == 'xls' || params[:format] == 'csv'
+      #initialize fields
+      index = 0
+  
+      @assignments.each do |assignment|
+        @report[index] = { 'First Name' => User.find(assignment.user_id).fname,
+          'Last Name' => User.find(assignment.user_id).lname,
+          'Asset Tag' => Computer.find(assignment.computer_id).asset_tag,
+          'Assign Date' => assignment.assign_date }
+        index += 1
+      end
+    end
+
+    respond_to do |format|
+      format.html # show.html.erb
+      format.json { render json: @assignments }
+      format.xls  { send_data report_to_csv(col_sep: "\t"), :filename => 'report.xls' }
+      format.csv { send_data report_to_csv, :filename => 'report.csv' }
+    end
+
+  end
+end
+
+private
+
+#method to generate report csv
+def report_to_csv(options = {})
+  if !@report.empty?  
+    CSV.generate(options) do |csv|
+      csv << @report[0].keys
+      @report.each do |assignment|
+        csv << assignment.values
+      end
     end
   end
 end
+
