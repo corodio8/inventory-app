@@ -16,6 +16,10 @@
 
 <% @assignments.each do |assignment| %>
   <tr class="<%= cycle('list-line-odd', 'list-line-even') %>">
+    <%= if params[:transfer] == '1' %>
+      <td><%= @report %>
+    <% end %>
+    
     <td><%= User.find(assignment.user_id).fname + " " + User.find(assignment.user_id).lname %></td>
     <td><%= Computer.find(assignment.computer_id).asset_tag %></td>
     <td><%= assignment.assign_date %></td>
@@ -28,6 +32,10 @@
 
 <br />
 <p>
+
+<%= debug params %>
+@transfer_list class:  <%= debug @transfer_list.class %>
+<%= debug @transfer_list %>
 <%= debug @report %>
 <%= debug @report.class %>
 <%= debug @assignments.class %>

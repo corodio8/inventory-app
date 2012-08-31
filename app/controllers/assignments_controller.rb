@@ -3,6 +3,9 @@ class AssignmentsController < ApplicationController
   # GET /assignments
   # GET /assignments.json
   
+  @@start_of_time = ('01/01/1337'.to_date)
+  @@end_of_time = ('01/01/4000'.to_date)
+
   #shows currently assigned assets
   def index
     @assignments = Array.new
@@ -169,7 +172,7 @@ class AssignmentsController < ApplicationController
 
     #filter by range
     #check that BOTH exist, else fail
-    if !(params[:start_date] && params[:end_date]).empty?
+  if !(params[:start_date] && params[:end_date]).empty?
       #check if assignment has been initialized, if not then create, if so then filter
       start_date = Date.strptime(params[:start_date], '%m/%d/%Y')
       end_date = Date.strptime(params[:end_date], '%m/%d/%Y')
@@ -181,19 +184,36 @@ class AssignmentsController < ApplicationController
     elsif params[:start_date].empty? && !params[:end_date].empty?
       end_date = Date.strptime(params[:end_date], '%m/%d/%Y')
       if @assignments
-        @assignments = @assignments.where(:assign_date => ('01/01/1337'.to_date)..end_date)
+        @assignments = @assignments.where(:assign_date => @@start_of_time..end_date)
       else
-        @assignments = Assignment.where(:assign_date => ('01/01/1337'.to_date)..end_date)
+        @assignments = Assignment.where(:assign_date => @@star_of_time..end_date)
       end
     elsif !params[:start_date].empty? && params[:end_date].empty?
       start_date = Date.strptime(params[:start_date], '%m/%d/%Y')
       if @assignments
-        @assignments = @assignments.where(:assign_date => start_date..('01/01/4000'.to_date))
+        @assignments = @assignments.where(:assign_date => start_date..@@end_of_time)
       else
-        @assignments = Assignment.where(:assign_date => start_date..('01/01/4000'.to_date))
+        @assignments = Assignment.where(:assign_date => start_date..@@end_of_time)
       end
     end
-  
+
+    # END FILTERS
+    # BEGIN TRANSFER OPTIONS
+    
+    if params[:transfer] == '1'
+      @master_list = Assignment.all
+      #for each assignment, the corresonding assignment object is the transferred from object
+      @transfer_list = []
+      index = 0
+      @assignments.each do |model|
+        @transfer_list[index] = { :assign_id => model.id,
+          :assignment => Assignment.where(:computer_id => model.computer_id).where(
+            :assign_date => @@start_of_time...model.assign_date).order("assign_date ASC").last}
+        index += 1
+      end
+    end
+
+ 
     @report = []
     if params[:format] == 'xls' || params[:format] == 'csv'
       #initialize fields

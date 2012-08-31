@@ -12,6 +12,10 @@
 
     <%= label_tag 'End Date (MM-DD-YYYY)' %><br />
     <%= text_field_tag :end_date %><br />
+
+    <%= check_box_tag(:transfer) %>
+    <%= label_tag(:transfer, 'Show Transfers') %> <br />
+
   </div>
   <div class="action">
     <%= submit_tag "Generate Report" %>
