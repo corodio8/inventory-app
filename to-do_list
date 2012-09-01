@@ -1,0 +1,24 @@
+Tests
+1) Create Users, Assignment, Computer Fixtures
+2) Create User, Computer Creatue validation
+3) Create Validaton on Searches
+  a) if all fields empty - error
+  b) various searches - success
+  c) date formad - error + success
+4) Create Validation on Transfer Searches - match output
+
+Bugs
+1) If Blank form entered
+2) Valid Date Format
+3) Rescue if bad form
+4) Disallow assignment to same user
+5) Disallow assignment on same day, as this will cause issue with search
+
+Features
+1) Add common searches
+  a) per month
+  b) yearly
+2) Create check no assignments in same day (can break search)
+3) Setup Partial Searching on names
+4) Beautify with CSS
+

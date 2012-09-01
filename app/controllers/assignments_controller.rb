@@ -202,17 +202,22 @@ class AssignmentsController < ApplicationController
     
     if params[:transfer] == '1'
       @master_list = Assignment.all
-      #for each assignment, the corresonding assignment object is the transferred from object
+      #The index of transfer_list corresponds to the id of eac model in assigments, which is the set returned by the query
+      #The content of the array holds the Assignment object which is the last asignment previous to the @assignment one
+      #hence the transferred-from object.
       @transfer_list = []
-      index = 0
+      #transfer_names is the translation from transfer_list to the corresponding user name
+      @transfer_names = []
       @assignments.each do |model|
-        @transfer_list[index] = { :assign_id => model.id,
-          :assignment => Assignment.where(:computer_id => model.computer_id).where(
-            :assign_date => @@start_of_time...model.assign_date).order("assign_date ASC").last}
-        index += 1
+        @transfer_list[model.id] = Assignment.where(:computer_id => model.computer_id).where(
+                                   :assign_date => @@start_of_time...model.assign_date).order("assign_date ASC").last
+        if !@transfer_list[model.id].nil?
+          @transfer_names[model.id] = User.find(@transfer_list[model.id].user_id).fname + " " + User.find(@transfer_list[model.id].user_id).lname
+        end
       end
     end
 
+    @test_array = [Assignment.find(6), Assignment.find(7)]
  
     @report = []
     if params[:format] == 'xls' || params[:format] == 'csv'
