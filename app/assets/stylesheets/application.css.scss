@@ -1,0 +1,113 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, vendor/assets/stylesheets,
+ * or vendor/assets/stylesheets of plugins, if any, can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the top of the
+ * compiled file, but it's generally better to create a new file per style scope.
+ *
+ *= require_self
+ *= require_tree .
+ */
+
+body {
+  font-family: sans-serif;
+  font-size: 80%;
+}
+
+
+p, ol, ul, td {
+  font-family: verdana, arial, helvetica, sans-serif;
+  font-size: 13px;
+  line-height: 18px;
+}
+
+#main {
+  clear: all;
+  margin-left: 18em;
+  margin-right: 18em;
+  padding-top: 4ex;
+  padding-bottom: 2ex;
+  padding-left: 2em;
+  padding-right: 2em;
+  background: white;
+}
+
+#main h1 {
+  font-family: verdana;
+  font-size: 175%;
+  border-bottom: 1px solid #77d;
+}
+
+#main table {
+  border-collapse: collapse;
+}
+
+#main th {
+  font: sans-serif;
+  border: 2px gray;
+  border-right: hidden;
+}
+
+#main td {
+  padding-right: 1em;
+  }
+
+#main td.link {
+  background-color: #fff;
+}
+
+.list-line-even {
+  background-color: white;
+}
+
+.list-line-odd {
+  background-color: #98FB98; 
+}
+
+#main a {
+  color: #000;
+  &:visited {
+    color: #666;
+  }
+  &:hover {
+    color: #7FFF00;
+  }
+}
+
+.field_with_errors {
+  padding: 2px;
+  background-color: red;
+  display: table;
+}
+
+#error_explanation {
+  width: 450px;
+  border: 2px solid red;
+  padding: 7px;
+  padding-bottom: 0;
+  margin-bottom: 20px;
+  background-color: #f0f0f0;
+  h2 {
+    text-align: left;
+    font-weight: bold;
+    padding: 5px 5px 5px 15px;
+    font-size: 12px;
+    margin: -7px;
+    margin-bottom: 0px;
+    background-color: #c00;
+    color: #fff;
+  }
+  ul li {
+    font-size: 12px;
+    list-style: square;
+  }
+}
+
+pre {
+  background-color: #eee;
+  padding: 10px;
+  font-size: 11px;
+}

@@ -41,4 +41,9 @@ gem 'jquery-rails'
 #gem "to-csv", "~> 1.0.3"
 #gem 'to_xls', '~> 1.5.1'
 
-gem 'rspec', :group => :test
+group :development, :test do
+  gem 'rspec-rails', '~> 2.11.0'
+  gem 'mocha', '~> 0.12.3'
+  gem 'webrat', ' ~> 0.7.3'
+  gem 'factory_girl_rails', '~> 4.0.0'
+end

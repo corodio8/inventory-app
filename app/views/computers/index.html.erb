@@ -21,9 +21,9 @@
     <td><%= computer.computer_name %></td>
     <td><%= computer.make %></td>
     <td><%= computer.model %></td>
-    <td><%= link_to 'Show', computer %></td>
-    <td><%= link_to 'Edit', edit_computer_path(computer) %></td>
-    <td><%= link_to 'Destroy', computer, confirm: 'Are you sure?', method: :delete %></td>
+    <td class='link'><%= link_to 'Show', computer %></td>
+    <td class='link'><%= link_to 'Edit', edit_computer_path(computer) %></td>
+    <td class='link'><%= link_to 'Destroy', computer, confirm: 'Are you sure?', method: :delete %></td>
   </tr>
 <% end %>
 </table>

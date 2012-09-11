@@ -29,9 +29,8 @@
     <td><%= User.find(assignment.user_id).fname + " " + User.find(assignment.user_id).lname %></td>
     <td><%= Computer.find(assignment.computer_id).asset_tag %></td>
     <td><%= assignment.assign_date %></td>
-    <td><%= link_to 'Show', assignment %></td>
-    <td><%= link_to 'Edit', edit_assignment_path(assignment) %></td>
-    <td><%= link_to 'Destroy', assignment, confirm: 'Are you sure?', method: :delete %></td>
+    <td class='link'><%= link_to 'Edit', edit_assignment_path(assignment) %></td>
+    <td class='link'><%= link_to 'Destroy', assignment, confirm: 'Are you sure?', method: :delete %></td>
   </tr>
 <% end %>
 </table>

@@ -3,5 +3,6 @@ class Computer < ActiveRecord::Base
 
   validates :asset_tag, :computer_name, :make, :model, :serial_no, :presence => true
   
-  has_many :assignments
+  has_many :assignments, :foreign_key => 'computer_id'
+  has_many :users, :through => :assignments
 end

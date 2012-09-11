@@ -8,8 +8,9 @@ class AssignmentsController < ApplicationController
 
   #shows currently assigned assets
   def index
-    @assignments = Array.new
+    @assignments = []
     #for each asset, find all assignments applied, order by date and select entry, which would be current
+    @computers = Computer.all
     Computer.all.each do |asset|
       @assignments <<  Assignment.where(:computer_id => asset.id).order("assign_date ASC").last
     end
@@ -27,7 +28,7 @@ class AssignmentsController < ApplicationController
 
   #test action
   def debug
-    @assignments = Assignment.all
+    @assignments = Assignment.first.build_computer
   end
 
   #assigns a computer object to selected user with assign_date
@@ -91,19 +92,19 @@ class AssignmentsController < ApplicationController
 
   # POST /assignments
   # POST /assignments.json
-  def create
-    @assignment = Assignment.new(params[:assignment])
-
-    respond_to do |format|
-      if @assignment.save
-        format.html { redirect_to @assignment, notice: 'Assignment was successfully created.' }
-        format.json { render json: @assignment, status: :created, location: @assignment }
-      else
-        format.html { render action: "new" }
-        format.json { render json: @assignment.errors, status: :unprocessable_entity }
-      end
-    end
-  end
+#  def create
+#    @assignment = Assignment.new(params[:assignment])
+#
+#    respond_to do |format|
+#      if @assignment.save
+#        format.html { redirect_to @assignment, notice: 'Assignment was successfully created.' }
+#        format.json { render json: @assignment, status: :created, location: @assignment }
+#      else
+#        format.html { render action: "new" }
+#        format.json { render json: @assignment.errors, status: :unprocessable_entity }
+#      end
+#    end
+#  end
 
   # PUT /assignments/1
   # PUT /assignments/1.json
@@ -172,24 +173,24 @@ class AssignmentsController < ApplicationController
 
     #filter by range
     #check that BOTH exist, else fail
-  if !(params[:start_date] && params[:end_date]).empty?
+    if !(params[:start_date].empty? || params[:end_date].empty?)
       #check if assignment has been initialized, if not then create, if so then filter
-      start_date = Date.strptime(params[:start_date], '%m/%d/%Y')
-      end_date = Date.strptime(params[:end_date], '%m/%d/%Y')
+      start_date = Date.strptime(params[:start_date], '%m-%d-%Y')
+      end_date = Date.strptime(params[:end_date], '%m-%d-%Y')
       if @assignments
         @assignments = @assignments.where(:assign_date => start_date..end_date)
       else
         @assignments = Assignment.where(:assign_date => start_date..end_date)
       end
     elsif params[:start_date].empty? && !params[:end_date].empty?
-      end_date = Date.strptime(params[:end_date], '%m/%d/%Y')
+      end_date = Date.strptime(params[:end_date], '%m-%d-%Y')
       if @assignments
         @assignments = @assignments.where(:assign_date => @@start_of_time..end_date)
       else
-        @assignments = Assignment.where(:assign_date => @@star_of_time..end_date)
+        @assignments = Assignment.where(:assign_date => @@start_of_time..end_date)
       end
     elsif !params[:start_date].empty? && params[:end_date].empty?
-      start_date = Date.strptime(params[:start_date], '%m/%d/%Y')
+      start_date = Date.strptime(params[:start_date], '%m-%d-%Y')
       if @assignments
         @assignments = @assignments.where(:assign_date => start_date..@@end_of_time)
       else
@@ -200,44 +201,49 @@ class AssignmentsController < ApplicationController
     # END FILTERS
     # BEGIN TRANSFER OPTIONS
     
-    if params[:transfer] == '1'
-      @master_list = Assignment.all
-      #The index of transfer_list corresponds to the id of eac model in assigments, which is the set returned by the query
-      #The content of the array holds the Assignment object which is the last asignment previous to the @assignment one
-      #hence the transferred-from object.
-      @transfer_list = []
-      #transfer_names is the translation from transfer_list to the corresponding user name
-      @transfer_names = []
-      @assignments.each do |model|
-        @transfer_list[model.id] = Assignment.where(:computer_id => model.computer_id).where(
-                                   :assign_date => @@start_of_time...model.assign_date).order("assign_date ASC").last
-        if !@transfer_list[model.id].nil?
-          @transfer_names[model.id] = User.find(@transfer_list[model.id].user_id).fname + " " + User.find(@transfer_list[model.id].user_id).lname
+    #skip entire block if assignments is nil
+    if !@assignments.nil? 
+      if params[:transfer] == '1'
+        @master_list = Assignment.all
+        #The index of transfer_list corresponds to the id of eac model in assigments, which is the set returned by the query
+        #The content of the array holds the Assignment object which is the last asignment previous to the @assignment one
+        #hence the transferred-from object.
+        @transfer_list = []
+        #transfer_names is the translation from transfer_list to the corresponding user name
+        @transfer_names = []
+        @assignments.each do |model|
+          @transfer_list[model.id] = Assignment.where(:computer_id => model.computer_id).where(
+                                     :assign_date => @@start_of_time...model.assign_date).order("assign_date ASC").last
+          if !@transfer_list[model.id].nil?
+            @transfer_names[model.id] = User.find(@transfer_list[model.id].user_id).fname + " " + User.find(@transfer_list[model.id].user_id).lname
+          end
+        end
+      end
+
+      @report = []
+      if params[:format] == 'xls' || params[:format] == 'csv'
+        #initialize fields
+        index = 0
+    
+        @assignments.each do |assignment|
+          @report[index] = { 'First Name' => User.find(assignment.user_id).fname,
+            'Last Name' => User.find(assignment.user_id).lname,
+            'Asset Tag' => Computer.find(assignment.computer_id).asset_tag,
+            'Assign Date' => assignment.assign_date }
+          index += 1
         end
       end
     end
 
-    @test_array = [Assignment.find(6), Assignment.find(7)]
- 
-    @report = []
-    if params[:format] == 'xls' || params[:format] == 'csv'
-      #initialize fields
-      index = 0
-  
-      @assignments.each do |assignment|
-        @report[index] = { 'First Name' => User.find(assignment.user_id).fname,
-          'Last Name' => User.find(assignment.user_id).lname,
-          'Asset Tag' => Computer.find(assignment.computer_id).asset_tag,
-          'Assign Date' => assignment.assign_date }
-        index += 1
-      end
-    end
-
     respond_to do |format|
-      format.html # show.html.erb
-      format.json { render json: @assignments }
-      format.xls  { send_data report_to_csv(col_sep: "\t"), :filename => 'report.xls' }
-      format.csv { send_data report_to_csv, :filename => 'report.csv' }
+      if @assignments.nil?
+        format.html { redirect_to report_query_assignments_path, notice: "Cannot submit empty form" }
+      else
+        format.html # show.html.erb
+        format.json { render json: @assignments }
+        format.xls  { send_data report_to_csv(col_sep: "\t"), :filename => 'report.xls' }
+        format.csv { send_data report_to_csv, :filename => 'report.csv' }
+      end
     end
 
   end
