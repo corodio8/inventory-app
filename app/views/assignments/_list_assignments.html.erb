@@ -1,0 +1,38 @@
+<table>
+  <tr>
+    <% if params[:transfer] == '1' %>
+      <th>From User Name</th>
+    <% end %>
+    <th>User Name</th>
+    <th>Asset #</th>
+    <th>Assign date</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<p>
+<%= link_to 'xls', report_assignments_path(:params => params, :format => :xls )  %> | <%= link_to 'csv', report_assignments_path(:params => params, :format => :csv )  %>
+</p>
+
+<% @assignments.each do |assignment| %>
+  <tr class="<%= cycle('list-line-odd', 'list-line-even') %>">
+    <% if params[:transfer] == '1' %>
+      <% if @transfer_list[assignment.id] == nil %>
+        <td>None</td>
+      <% else %>
+        <td><%= @transfer_names[assignment.id] %></td>
+      <% end %>
+    <% end %>
+    <td><%= User.find(assignment.user_id).fname + " " + User.find(assignment.user_id).lname %></td>
+    <td><%= Computer.find(assignment.computer_id).asset_tag %></td>
+    <td><%= assignment.assign_date %></td>
+    <td class='link'><%= link_to 'Change Date', edit_assignment_path(assignment) %></td>
+    <td class='link'><%= link_to 'Delete Record', assignment, confirm: 'Are you sure?', method: :delete %></td>
+    <td class='link'><%= link_to 'Reassign', assign_to_computer_path(Computer.find(assignment.computer_id)) %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+

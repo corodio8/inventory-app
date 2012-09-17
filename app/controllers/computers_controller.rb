@@ -93,4 +93,15 @@ class ComputersController < ApplicationController
       format.json { head :no_content }
     end
   end
+
+  def assign_to
+    @users = User.all
+    @computer = Computer.find(params[:id])
+    @computer_id = params[:id]
+
+    respond_to do |format|
+      format.html
+      format.json
+    end
+  end
 end

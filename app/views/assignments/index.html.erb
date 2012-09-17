@@ -1,26 +1,14 @@
-<h1>Listing assignments</h1>
-
-<table>
-  <tr>
-    <th>User Name</th>
-    <th>Asset #</th>
-    <th>Assign date</th>
-    <th></th>
-    <th></th>
-    <th></th>
-  </tr>
-
-<% @assignments.each do |assignment| %>
-  <tr class="<%= cycle('list-line-odd', 'list-line-even') %>">
-    <td><%= User.find(assignment.user_id).fname + " " + User.find(assignment.user_id).lname %></td>
-    <td><%= Computer.find(assignment.computer_id).asset_tag %></td>
-    <td><%= assignment.assign_date %></td>
-    <td class='link'><%= link_to 'Change Date', edit_assignment_path(assignment) %></td>
-    <td class='link'><%= link_to 'Delete', assignment, confirm: 'Are you sure?', method: :delete %></td>
-  </tr>
+<% if notice %>
+ <%= notice %>
 <% end %>
-</table>
 
-<br />
+<h1>Showing Current Inventory</h1>
 
-<%= debug @assignments %>
+<%= render 'list_assignments' %>
+
+latest_assignment.class
+<%= debug @latest_assignment.class %>
+
+
+@assignment
+<%= debug @assignment %>

@@ -1,28 +1,3 @@
 <h1>Listing Historical Assignments</h1>
 
-<table>
-  <tr>
-    <th>User Name</th>
-    <th>Asset #</th>
-    <th>Assign date</th>
-    <th></th>
-    <th></th>
-    <th></th>
-  </tr>
-  <%= Assignment.where(:user_id => '1').last.user_id %>
-
-<% @assignments.each do |assignment| %>
-  <tr class="<%= cycle('list-line-odd', 'list-line-even') %>">
-    <td><%= User.find(assignment.user_id).fname + " " + User.find(assignment.user_id).lname %></td>
-    <td><%= Computer.find(assignment.computer_id).asset_tag %></td>
-    <td><%= assignment.assign_date %></td>
-    <td><%= link_to 'Show', assignment %></td>
-    <td><%= link_to 'Edit', edit_assignment_path(assignment) %></td>
-    <td><%= link_to 'Destroy', assignment, confirm: 'Are you sure?', method: :delete %></td>
-  </tr>
-<% end %>
-</table>
-
-<br />
-
-<%= link_to 'New Assignment', new_assignment_path %>
+<%= render 'list_assignments' %>

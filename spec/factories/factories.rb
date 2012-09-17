@@ -42,4 +42,10 @@ FactoryGirl.define do
   factory :dummy_assignment, class: Assignment do
   end
 
+  factory :single_assignment, class: Assignment do
+    user_id '1'
+    computer_id '1'
+    assign_date '11-11-2008'
+  end
+
 end

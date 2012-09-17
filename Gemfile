@@ -20,6 +20,10 @@ group :assets do
   gem 'uglifier', '>= 1.0.3'
 end
 
+
+#all those fun optional gems
+gem 'squeel', '~> 1.0.11'
+# gem "squeel", :git => "git://github.com/ernie/squeel.git" # Track git repo
 gem 'jquery-rails'
 
 # To use ActiveModel has_secure_password
@@ -37,10 +41,7 @@ gem 'jquery-rails'
 # To use debugger
 # gem 'debugger'
 
-#gem 'al-to_xls', '~> 0.2.1'
-#gem "to-csv", "~> 1.0.3"
-#gem 'to_xls', '~> 1.5.1'
-
+#Test environment Gems
 group :development, :test do
   gem 'rspec-rails', '~> 2.11.0'
   gem 'mocha', '~> 0.12.3'

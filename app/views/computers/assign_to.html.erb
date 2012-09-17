@@ -1,0 +1,49 @@
+<h1>Assign Computer to User</h1>
+
+<% if notice %>
+<div id='notice'> <%= notice %> </div>
+<% end %>
+
+<%= form_for(@computer) do |f| %>
+  <% if @computer.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@assignment.errors.count, "error") %> prohibited this user from being saved:</h2>
+      <ul>
+      <% @computer.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+<% end %>
+
+
+<table>
+  <tr>
+    <th>Full Name</th>
+    <th>Username</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @users.each do |user| %>
+    <tr class="<%= cycle('list-line-odd', 'list-line-even')  %>">
+    <td><%= user.fname + " " + user.lname %></td>
+    <td><%= user.uname %></td>
+
+
+    <td><%= link_to 'assign', 
+      new_assignment_path(
+      :user_id => user.id, 
+      :computer_id => @computer.id, 
+      :assign_date => Date.today) 
+    %> 
+    </td>
+
+  </tr>
+<% end %>
+</table>
+
+<br />

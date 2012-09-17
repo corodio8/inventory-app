@@ -74,16 +74,31 @@ describe AssignmentsController do
   end
 
   describe "POST new" do
-    #WIP
-    #it "assigns a new assignment as @assignment" do
-    #  User.any_instance.stubs(:valid?).returns(true)
-    #  get :new, {}, valid_session
-    #  assigns(:user).should be_a_new(User)
-    #end
     
-    #WIP
-    it "fails if assign_date is already taken" do
+    it "assigns a new assignment as @assignment" do
+      User.any_instance.stubs(:valid?).returns(true)
+      assignment_attr = FactoryGirl.attributes_for(:single_assignment)
+      get :new, assignment_attr, valid_session
+      assigns(:assignment).should_not be_a_new(Assignment)
     end
+    
+    it "with assign_date is taken for @computer, fail and render template" do
+      pending "WIP"
+      FactoryGirl.create :single_assignment
+        put :new, {:user_id => 1,
+                   :computer_id => 1,
+                   :assign_date => 11-11-2008}
+        assigns(:assignment).should eq(nil)
+    end
+
+    it "with assigned user already current, fail and render template" do
+      FactoryGirl.create :single_assignment
+        put :new, {:user_id => 1,
+                   :computer_id => 1,
+                   :assign_date => 11-11-2008}
+        assigns(:assignment).should be_a_new(Assignment)
+    end
+
   end
 
   describe "GET edit" do
@@ -198,9 +213,7 @@ describe AssignmentsController do
                       :start_date => '',
                       :end_date => ''
         }, valid_session
-        pending("Code not implemented") do
           assigns(:assignments).should eq([assignment])
-        end
       end
     end
     
@@ -208,7 +221,7 @@ describe AssignmentsController do
     describe "with LNAME" do
       it "matching assigns lname-matched @assignments" do
         assignment = FactoryGirl.create :associated_assignment
-                    put :report, {:fname => '',
+        put :report, {:fname => '',
                     :lname => 'Smith',
                     :start_date => '',
                     :end_date => ''
@@ -218,24 +231,22 @@ describe AssignmentsController do
 
       it "not matching assigns nothing" do
         assignment = FactoryGirl.create :associated_assignment
-                   put :report, {:fname => '',
+        put :report, {:fname => '',
                    :lname => 'Greens',
                    :start_date => '',
                    :end_date => ''
-          }, valid_session
-          assigns(:assignments).should have(0).Assignment
+        }, valid_session
+        assigns(:assignments).should have(0).Assignment
       end
 
       it "partially matching assigns lname-matched @assignments" do
         assignment = FactoryGirl.create :associated_assignment
-                   put :report, {:fname => '',
+        put :report, {:fname => '',
                    :lname => 'Sm',
                    :start_date => '',
                    :end_date => ''
         }, valid_session
-        pending("Code not implemented") do
-          assigns(:assignments).should eq([assignment])
-        end
+        assigns(:assignments).should eq([assignment])
       end
     end
 
@@ -243,32 +254,32 @@ describe AssignmentsController do
     describe "with start_date" do
       it "returns assignment dates matching" do
         assignment = FactoryGirl.create :associated_assignment
-                  put :report, {:fname => '',
+        put :report, {:fname => '',
                   :lname => '',
                   :start_date => '11-11-2008',
                   :end_date => ''
-         }, valid_session
-         assigns(:assignments).should eq([assignment])
+        }, valid_session
+        assigns(:assignments).should eq([assignment])
       end
 
       it "returns assignments dates after" do
         assignment = FactoryGirl.create :associated_assignment
-                  put :report, {:fname => '',
+        put :report, {:fname => '',
                   :lname => '',
                   :start_date => '11-11-2007',
                   :end_date => ''
-         }, valid_session
-         assigns(:assignments).should eq([assignment])
+        }, valid_session
+        assigns(:assignments).should eq([assignment])
       end
 
       it "returns no assignments dates before" do
         assignment = FactoryGirl.create :associated_assignment
-                  put :report, {:fname => '',
+        put :report, {:fname => '',
                   :lname => '',
                   :start_date => '11-11-2009',
                   :end_date => ''
-         }, valid_session
-         assigns(:assignments).should have(0).Assignment
+        }, valid_session
+        assigns(:assignments).should have(0).Assignment
       end
     end
 
@@ -276,32 +287,32 @@ describe AssignmentsController do
     describe "with end_date" do
       it "returns assignment dates matching" do
         assignment = FactoryGirl.create :associated_assignment
-                  put :report, {:fname => '',
+        put :report, {:fname => '',
                   :lname => '',
                   :start_date => '',
                   :end_date => '11-11-2008'
-         }, valid_session
-         assigns(:assignments).should eq([assignment])
+        }, valid_session
+        assigns(:assignments).should eq([assignment])
       end
 
       it "returns assignments dates before" do
         assignment = FactoryGirl.create :associated_assignment
-                  put :report, {:fname => '',
+        put :report, {:fname => '',
                   :lname => '',
                   :start_date => '',
                   :end_date => '11-11-2009'
-         }, valid_session
-         assigns(:assignments).should eq([assignment])
+        }, valid_session
+        assigns(:assignments).should eq([assignment])
       end
 
       it "returns no assignments dates after" do
         assignment = FactoryGirl.create :associated_assignment
-                  put :report, {:fname => '',
+        put :report, {:fname => '',
                   :lname => '',
                   :start_date => '',
                   :end_date => '11-11-2007'
-         }, valid_session
-         assigns(:assignments).should have(0).Assignment
+        }, valid_session
+        assigns(:assignments).should have(0).Assignment
       end
     end
 
@@ -309,49 +320,49 @@ describe AssignmentsController do
     describe "with start_date AND end_date" do
       it "returns assignment dates matching" do
         assignment = FactoryGirl.create :associated_assignment
-                  put :report, {:fname => '',
+        put :report, {:fname => '',
                   :lname => '',
                   :start_date => '11-11-2008',
                   :end_date => '11-11-2008'
-         }, valid_session
-         assigns(:assignments).should eq([assignment])
+        }, valid_session
+        assigns(:assignments).should eq([assignment])
       end
 
       it "returns assignments dates inside range" do
         assignment = FactoryGirl.create :associated_assignment
-                  put :report, {:fname => '',
+        put :report, {:fname => '',
                   :lname => '',
                   :start_date => '11-11-2007',
                   :end_date => '11-11-2009'
-         }, valid_session
-         assigns(:assignments).should eq([assignment])
+        }, valid_session
+        assigns(:assignments).should eq([assignment])
       end
 
       it "returns no assignments before range" do
         assignment = FactoryGirl.create :associated_assignment
-                  put :report, {:fname => '',
+        put :report, {:fname => '',
                   :lname => '',
                   :start_date => '11-11-2009',
                   :end_date => '11-11-2010'
-         }, valid_session
-         assigns(:assignments).should have(0).Assignment
+        }, valid_session
+        assigns(:assignments).should have(0).Assignment
       end
       
       it "returns no assignments after range" do
         assignment = FactoryGirl.create :associated_assignment
-                  put :report, {:fname => '',
+        put :report, {:fname => '',
                   :lname => '',
                   :start_date => '11-11-2006',
                   :end_date => '11-11-2007'
-         }, valid_session
-         assigns(:assignments).should have(0).Assignment
+        }, valid_session
+        assigns(:assignments).should have(0).Assignment
       end
     end
 
     describe "with empty form" do
       it "re-renders 'report' template with error" do
         assignment = FactoryGirl.create :associated_assignment
-                  put :report, {:fname => '',
+        put :report, {:fname => '',
                   :lname => '',
                   :start_date => '',
                   :end_date => ''
@@ -359,5 +370,20 @@ describe AssignmentsController do
         response.should redirect_to("/assignments/report_query")
       end
     end
+  
+    describe "with transfers checked" do
+      it "returns transfer_names with equal entires as assignments" do
+        assignment = FactoryGirl.create :associated_assignment
+        put :report, {:fname => 'John',
+                  :lname => '',
+                  :start_date => '',
+                  :end_date => '',
+                  :transfer => '1'
+        }, valid_session
+        assigns(:transfer_list).compact.count.should == 0
+      end
+    end
+        
+    
   end #End PUT Report
 end

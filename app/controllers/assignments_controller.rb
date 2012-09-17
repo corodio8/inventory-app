@@ -38,27 +38,40 @@ class AssignmentsController < ApplicationController
     #then checks to see if that assignment matches user_id, if its does then 
     #it is already current and rejects assignment request
 
-    #finds the latest assignment for particular computer id and assigns it, otherwise fail.
-    if (@assignment = Assignment.where(:computer_id => params[:computer_id]).order("assign_date ASC").last)
+    #finds the latest assignment for particular computer id and assigns it, otherwise just create new object
+    if (@latest_assignment = Assignment.where(:computer_id => params[:computer_id]).order("assign_date ASC").last)
 
       #checks if user_id matches current user_id, if so then record is already current and reject assignment
-      if not @assignment.user_id == params[:user_id]
-        @assignment = Assignment.new
-
-        @assignment.update_attributes(:user_id => params[:user_id],
+      if (@latest_assignment.user_id != params[:user_id].to_i)
+        @assignment = Assignment.new({:user_id => params[:user_id],
                                  :computer_id => params[:computer_id],
-                                 :assign_date => params[:assign_date])
+                                 :assign_date => params[:assign_date]})
+        if @assignment.save
+          flash[:notice] = ("#{@latest_assignment.user_id} == #{params[:user_id]} is the issue here")
+          respond_to do |format|
+            format.html { redirect_to assignments_url }
+            format.json { head :no_content }
+          end
+        else
+          redirect_to :back, @assignment 
+        end
+      else
+        flash[:notice] = ("Could not assign asset, already current")
+        redirect_to :back #attach_user_path(params[:user_id], :notice => 'Invalid') 
+      end
+    else
+      @assignment = Assignment.new({:user_id => params[:user_id],
+                               :computer_id => params[:computer_id],
+                               :assign_date => params[:assign_date]})
+      if @assignment.save
         respond_to do |format|
           format.html { redirect_to assignments_url }
           format.json { head :no_content }
         end
       else
         flash[:notice] = ("Could not assign asset, already current")
-        redirect_to attach_user_path(params[:user_id], :notice => 'Invalid') 
+        redirect_to :back #attach_user_path(params[:user_id], :notice => 'Invalid') 
       end
-    else
-      flash[:notice] = ("Could not assign asset, already current")
-      redirect_to attach_user_path(params[:user_id], :notice => 'Invalid') 
     end
   end
 
@@ -153,21 +166,26 @@ class AssignmentsController < ApplicationController
 
     #filter by first name
     if !params[:fname].empty?
-      @user_id = User.where(:fname => params[:fname]).first
+      @user_ids = User.where{fname.like my{"%#{params[:fname]}%"} }
+      user_ids = []
+      @user_ids.each { |user| user_ids << user.id }
+      #since this is first test, this will never be true
       if @assignments
-        @assignments = @assignments.where(:user_id => @user_id)
+        @assignments = @assignments.where{user_id.like_any user_ids}
       else
-        @assignments = Assignment.where(:user_id => @user_id)
+        @assignments = Assignment.where{user_id.like_any user_ids}
       end
     end
 
     #filter by last name
     if !params[:lname].empty?
-      @user_id = User.where(:lname => params[:lname]).first
+      @user_ids = User.where{lname.like my{"%#{params[:lname]}%"} }
+        user_ids = []
+        @user_ids.each { |user| user_ids << user.id }
       if @assignments
-        @assignments = @assignments.where(:user_id => @user_id)
+        @assignments = @assignments.where{user_id.like_any user_ids}
       else
-        @assignments = Assignment.where(:user_id => @user_id)
+        @assignments = Assignment.where{user_id.like_any user_ids}
       end
     end
 
@@ -247,6 +265,8 @@ class AssignmentsController < ApplicationController
     end
 
   end
+
+
 end
 
 private
@@ -262,4 +282,6 @@ def report_to_csv(options = {})
     end
   end
 end
+
+
 

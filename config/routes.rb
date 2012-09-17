@@ -2,6 +2,7 @@ InventoryApp::Application.routes.draw do
   resources :assignments do
     member do
       get :assign_computer_to_user
+      get :assign_to
     end
     collection do
       get :debug
@@ -11,7 +12,11 @@ InventoryApp::Application.routes.draw do
     end
   end
 
-  resources :computers
+  resources :computers do
+    member do
+      get :assign_to
+    end
+  end
 
   resources :users do
     get :attach, :on => :member
