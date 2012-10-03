@@ -1,15 +1,6 @@
 
 FactoryGirl.define do
-#  sequence(:user_id_count, 1) do |n|
-#    n
-#  end
-
-#  sequence :computer_id_count do |n|
-#    n
-#  end
-  
   factory :user do
-#    sequence(:id) { |n| n }
     id 1
     fname "John"
     lname "Smith"
@@ -18,7 +9,6 @@ FactoryGirl.define do
   end
 
   factory :computer do
-#    sequence(:id, 1) { |n| n }
     id 1
     asset_tag "12345"
     computer_name "comp1"
@@ -30,6 +20,10 @@ FactoryGirl.define do
   factory :assignment do
     user_id ''
     computer_id ''
+    assign_date '11-11-2008'
+  end
+
+  factory :assignment_date_only, class: Assignment do
     assign_date '11-11-2008'
   end
 
@@ -46,6 +40,18 @@ FactoryGirl.define do
     user_id '1'
     computer_id '1'
     assign_date '11-11-2008'
+  end
+
+  factory :admin_user do
+    email 'example@example.com'
+    password 'password123'
+    password_confirmation 'password123'
+  end
+
+  factory :admin_enabled_user, class: AdminUser do
+    email 'admin'
+    password 'admin'
+    password 'adimn'
   end
 
 end

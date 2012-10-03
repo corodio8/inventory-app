@@ -10,18 +10,19 @@
       </ul>
     </div>
   <% end %>
+  <p>
+    <b>User:</b>
+    <%= @assignment.user_id %>
+  </p>
+
+  <p>
+    <b>Computer:</b>
+    <%= @assignment.computer_id %>
+  </p>
 
   <div class="field">
-    <%= f.label :user_id %><br />
-    <%= f.number_field :user_id %>
-  </div>
-  <div class="field">
-    <%= f.label :computer_id %><br />
-    <%= f.number_field :computer_id %>
-  </div>
-  <div class="field">
-    <%= f.label :assign_date %><br />
-    <%= f.date_select :assign_date %>
+    <%= f.label "Assign Date (MM-DD-YYYY)" %><br />
+    <%= f.text_field :assign_date %>
   </div>
   <div class="actions">
     <%= f.submit %>

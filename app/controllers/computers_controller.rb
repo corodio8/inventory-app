@@ -1,7 +1,6 @@
 
 class ComputersController < ApplicationController
-  # GET /computers
-  # GET /computers.json
+  
   def index
     @computers = Computer.order("asset_tag ASC")
 
@@ -11,8 +10,6 @@ class ComputersController < ApplicationController
     end
   end
 
-  # GET /computers/1
-  # GET /computers/1.json
   def show
     @computer = Computer.find(params[:id])
 
@@ -22,8 +19,6 @@ class ComputersController < ApplicationController
     end
   end
 
-  # GET /computers/new
-  # GET /computers/new.json
   def new
     @computer = Computer.new
 
@@ -33,13 +28,10 @@ class ComputersController < ApplicationController
     end
   end
 
-  # GET /computers/1/edit
   def edit
     @computer = Computer.find(params[:id])
   end
 
-  # POST /computers
-  # POST /computers.json
   def create
     @computer = Computer.new(params[:computer])
 
@@ -48,14 +40,12 @@ class ComputersController < ApplicationController
         #Checks if default user exists, if not, then create
         default_user = User.where(:uname => User.get_default).first_or_create(:fname => 'IT', :lname => 'Dept')
         params = {
-            "user_id" => default_user.id,
-            "computer_id" => @computer.id,
-            "assign_date" => Date.today
+            :user_id => default_user.id,
+            :computer_id => @computer.id,
+            :assign_date => Date.today
         }
-
-        Assignment.new.update_attributes(:user_id => default_user.id,
-                                 :computer_id => @computer.id,
-                                 :assign_date => Date.today)
+        
+        create_assignment(params)
 
         format.html { redirect_to @computer, notice: 'Computer was successfully created.' }
         format.json { render json: @computer, status: :created, location: @computer }
@@ -66,8 +56,6 @@ class ComputersController < ApplicationController
     end
   end
 
-  # PUT /computers/1
-  # PUT /computers/1.json
   def update
     @computer = Computer.find(params[:id])
 
@@ -82,8 +70,6 @@ class ComputersController < ApplicationController
     end
   end
 
-  # DELETE /computers/1
-  # DELETE /computers/1.json
   def destroy
     @computer = Computer.find(params[:id])
     @computer.destroy

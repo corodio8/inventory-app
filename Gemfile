@@ -24,10 +24,11 @@ end
 #all those fun optional gems
 gem 'squeel', '~> 1.0.11'
 # gem "squeel", :git => "git://github.com/ernie/squeel.git" # Track git repo
+
 gem 'jquery-rails'
 
 # To use ActiveModel has_secure_password
-# gem 'bcrypt-ruby', '~> 3.0.0'
+gem 'bcrypt-ruby', '~> 3.0.0'
 
 # To use Jbuilder templates for JSON
 # gem 'jbuilder'

@@ -2,6 +2,7 @@
 <html>
 <head>
   <title>InventoryApp</title>
+  <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>
   <%= stylesheet_link_tag    "application" %>
   <%= stylesheet_link_tag    "navigation" %>
   <%= javascript_include_tag "application" %>
@@ -10,18 +11,48 @@
 
 <body>
   <nav id="top_nav">
-    <ul>
-      <li><%= link_to_unless_current 'Users', users_path%></li>
-      <li><%= link_to_unless_current 'Inventory', assignments_path%></li>
-      <li><%= link_to_unless_current 'Assets', computers_path%></li>
-      <li><%= link_to_unless_current 'History', history_assignments_path%></li>
-      <li><%= link_to_unless_current 'Reporting', report_query_assignments_path%></li>
-      <li><%= link_to_unless_current 'Debug', debug_assignments_path%></li>
+    <ul id="nav">
+      <li><%= link_to 'Management', users_path %>
+        <ul>
+          <li><%= link_to 'Users', users_path%></li>
+          <li><%= link_to 'Assets', computers_path%></li>
+        </ul>
+      </li>
+      <li><%= link_to 'Inventory', assignments_path%>
+        <ul>
+          <li><%= link_to 'History', history_assignments_path%></li>
+          <li><%= link_to 'Reporting', report_query_assignments_path%></li>
+        </ul>
+      </li>
+      <li><%= link_to 'Debug', debug_assignments_path %></li>
+
+      <% if current_user %>
+        <li class="float_right"><%= link_to 'Log Out', logout_path%></li>
+        <li class="float_right"><%= current_user.email %>
+        <li class="float_right"><%= link_to 'Administration', admin_users_path%></li>
+      <% else %>
+        <li class="float_right"><%= link_to 'Log In', login_path%></li>
+      <% end %>
+
     </ul>
   </nav>
 
   <div id="main">
+    
+    <% if alert %>
+      <p id="alert"><%= alert %></p>
+    <% end %>
+
+    <% if notice %>
+      <p id="notice"><%= notice %></p>
+    <% end %>
+
     <%= yield %>
   </div>
 </body>
+
+<script type="text/javascript">
+  $(document).ready(DocumentReady);
+</script>
+
 </html>

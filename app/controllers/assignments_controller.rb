@@ -12,7 +12,11 @@ class AssignmentsController < ApplicationController
     #for each asset, find all assignments applied, order by date and select entry, which would be current
     @computers = Computer.all
     Computer.all.each do |asset|
-      @assignments <<  Assignment.where(:computer_id => asset.id).order("assign_date ASC").last
+      if (latest_assignment = Assignment.where(:computer_id => asset.id).order("assign_date ASC").last)
+        @assignments << latest_assignment 
+      else
+        flash[:alert] = "Warning: Asset with tag #{asset.asset_tag} does not have any assignments. Please assign it to IT if it is not in use."
+      end
     end
     respond_to do |format|
       format.html # index.html.erb
@@ -43,33 +47,41 @@ class AssignmentsController < ApplicationController
 
       #checks if user_id matches current user_id, if so then record is already current and reject assignment
       if (@latest_assignment.user_id != params[:user_id].to_i)
-        @assignment = Assignment.new({:user_id => params[:user_id],
-                                 :computer_id => params[:computer_id],
-                                 :assign_date => params[:assign_date]})
-        if @assignment.save
-          flash[:notice] = ("#{@latest_assignment.user_id} == #{params[:user_id]} is the issue here")
-          respond_to do |format|
-            format.html { redirect_to assignments_url }
-            format.json { head :no_content }
+        if (@latest_assignment.assign_date != Date.today) or true
+          @assignment = Assignment.new({:assign_date => params[:assign_date]})
+          @assignment.user_id = params[:user_id]
+          @assignment.computer_id = params[:computer_id]
+          if @assignment.save
+          flash[:notice] = "Asset successfully assigned"
+            respond_to do |format|
+              format.html { redirect_to assignments_url }
+              format.json { head :no_content }
+            end
+          else
+            redirect_to request.referer
           end
         else
-          redirect_to :back, @assignment 
+          flash[:notice] = ("Could not assign asset, already assigned once today, please delete latest assignment first")
+          redirect_to :back 
         end
       else
         flash[:notice] = ("Could not assign asset, already current")
-        redirect_to :back #attach_user_path(params[:user_id], :notice => 'Invalid') 
+        redirect_to :back 
       end
-    else
-      @assignment = Assignment.new({:user_id => params[:user_id],
-                               :computer_id => params[:computer_id],
-                               :assign_date => params[:assign_date]})
+
+    #Case first assignment for a computer, this should only happen on computer creation
+    else 
+      @assignment = Assignment.new({:assign_date => params[:assign_date]})
+      @assignment.user_id = params[:user_id]
+      @assignment.computer_id = params[:computer_id]
       if @assignment.save
+        flash[:notice] = "Initial assignment successful"
         respond_to do |format|
           format.html { redirect_to assignments_url }
           format.json { head :no_content }
         end
       else
-        flash[:notice] = ("Could not assign asset, already current")
+        flash[:notice] = ("Unspecified Error Occurred")
         redirect_to :back #attach_user_path(params[:user_id], :notice => 'Invalid') 
       end
     end
@@ -125,8 +137,8 @@ class AssignmentsController < ApplicationController
     @assignment = Assignment.find(params[:id])
 
     respond_to do |format|
-      if @assignment.update_attributes(params[:assignment])
-        format.html { redirect_to @assignment, notice: 'Assignment was successfully updated.' }
+      if @assignment.update_attributes({:assign_date => format_date(params[:assignment][:assign_date])})
+        format.html { redirect_to @assignment, notice: "Assign date was successfully changed to #{params[:assignment][:assign_date]}" }
         format.json { head :no_content }
       else
         format.html { render action: "edit" }
@@ -283,5 +295,10 @@ def report_to_csv(options = {})
   end
 end
 
+#helper to return full name of user
+def user_full_name
+end
 
-
+def format_date(date)
+      Date.strptime(date, '%m-%d-%Y')
+end

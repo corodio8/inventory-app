@@ -33,30 +33,40 @@ p, ol, ul, td {
   padding-left: 2em;
   padding-right: 2em;
   background: white;
-}
 
-#main h1 {
-  font-family: verdana;
-  font-size: 175%;
-  border-bottom: 1px solid #77d;
-}
-
-#main table {
-  border-collapse: collapse;
-}
-
-#main th {
-  font: sans-serif;
-  border: 2px gray;
-  border-right: hidden;
-}
-
-#main td {
-  padding-right: 1em;
+  h1 {
+    font-family: verdana;
+    font-size: 175%;
+    border-bottom: 1px solid #77d;
   }
 
-#main td.link {
-  background-color: #fff;
+  table {
+    border-collapse: collapse;
+  }
+
+  th {
+    font: sans-serif;
+    border: 2px gray;
+    border-right: hidden;
+  }
+
+  td {
+    padding-right: 1em;
+    }
+
+  td.link {
+    background-color: #fff;
+  }
+
+  a {
+    color: #000;
+    &:visited {
+      color: #666;
+    }
+    &:hover {
+      color: #7FFF00;
+    }
+  }
 }
 
 .list-line-even {
@@ -67,20 +77,24 @@ p, ol, ul, td {
   background-color: #98FB98; 
 }
 
-#main a {
-  color: #000;
-  &:visited {
-    color: #666;
-  }
-  &:hover {
-    color: #7FFF00;
-  }
-}
-
 .field_with_errors {
   padding: 2px;
   background-color: red;
   display: table;
+}
+
+#alert {
+  border: 1px solid red;
+  padding: 7px;
+  padding-bottom: 5px;
+  padding-top: 5px;
+  margin-bottom: 20px;
+  background-color: #FA8072;
+  ul li {
+    font-size: 12px;
+    list-style: square;
+  }
+
 }
 
 #notice {

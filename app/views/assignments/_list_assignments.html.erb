@@ -27,9 +27,11 @@
     <td><%= User.find(assignment.user_id).fname + " " + User.find(assignment.user_id).lname %></td>
     <td><%= Computer.find(assignment.computer_id).asset_tag %></td>
     <td><%= assignment.assign_date %></td>
-    <td class='link'><%= link_to 'Change Date', edit_assignment_path(assignment) %></td>
-    <td class='link'><%= link_to 'Delete Record', assignment, confirm: 'Are you sure?', method: :delete %></td>
-    <td class='link'><%= link_to 'Reassign', assign_to_computer_path(Computer.find(assignment.computer_id)) %></td>
+    <% if current_user %>
+      <td class='link'><%= link_to 'Change Date', edit_assignment_path(assignment) %></td>
+      <td class='link'><%= link_to 'Delete Record', assignment, confirm: 'Are you sure?', method: :delete %></td>
+      <td class='link'><%= link_to 'Reassign', assign_to_computer_path(Computer.find(assignment.computer_id)) %></td>
+    <% end %>
   </tr>
 <% end %>
 </table>

@@ -23,7 +23,7 @@
     <td><%= computer.model %></td>
     <td class='link'><%= link_to 'Show', computer %></td>
     <td class='link'><%= link_to 'Edit', edit_computer_path(computer) %></td>
-    <td class='link'><%= link_to 'Destroy', computer, confirm: 'Are you sure?', method: :delete %></td>
+    <td class='link'><%= link_to 'Destroy', computer, confirm: 'WARNING: This will destroy all assignments associated with this asset, only use this if it was a test or erroneously created object, the asset being retired, then use the RETIRE function instead.', method: :delete %></td>
   </tr>
 <% end %>
 </table>

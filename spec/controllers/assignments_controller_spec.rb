@@ -24,7 +24,7 @@ describe AssignmentsController do
   # User. As you add validations to User, be sure to
   # update the return value of this method accordingly.
   def valid_attributes 
-    FactoryGirl.attributes_for(:assignment)
+    valid_attributes = FactoryGirl.attributes_for(:assignment)
   end
 
   # This should return the minimal set of values that should be in the session
@@ -33,6 +33,11 @@ describe AssignmentsController do
   def valid_session
     {}
   end
+
+  before(:each) do
+    request.env["HTTP_REFERER"] = "where_i_came_from"
+  end
+
 
   describe "GET index" do
     it "assigns assignments as @assignment" do
@@ -44,7 +49,7 @@ describe AssignmentsController do
     
     it "only assigns most recent assign_date per computer_id to @assignment" do
       Assignment.any_instance.stubs(:valid?).returns(true)
-      2.times { FactoryGirl.create(:assignment) }
+      2.times { FactoryGirl.create(:assignment, computer_id: 1) }
       FactoryGirl.create(:computer, id: 1)
       get :index, {}, valid_session
       assigns(:assignments).should have(1).Assignment
@@ -62,12 +67,19 @@ describe AssignmentsController do
       end
     end
 
+    it "warns if there exists a computer with 0 assignments" do
+      FactoryGirl.create :computer
+      get :index, {}, valid_session
+      flash[:alert].should_not be_nil
+    end
+                        
+
   end
 
   describe "GET show" do
     it "assigns the requested assignment as @assignment" do
       Assignment.any_instance.stubs(:valid?).returns(true)
-      assignment = Assignment.create! valid_attributes
+      assignment = FactoryGirl.create(:assignment)
       get :show, {:id => assignment.to_param}, valid_session
       assigns(:assignment).should eq(assignment)
     end
@@ -82,21 +94,23 @@ describe AssignmentsController do
       assigns(:assignment).should_not be_a_new(Assignment)
     end
     
-    it "with assign_date is taken for @computer, fail and render template" do
+    it "with assign_date is taken for @computer, fail and go :back" do
       pending "WIP"
       FactoryGirl.create :single_assignment
         put :new, {:user_id => 1,
                    :computer_id => 1,
                    :assign_date => 11-11-2008}
         assigns(:assignment).should eq(nil)
+        response.should redirect_to "where_i_came_from"
     end
 
-    it "with assigned user already current, fail and render template" do
+    it "with assigned user already current, fail and go :back" do
       FactoryGirl.create :single_assignment
         put :new, {:user_id => 1,
                    :computer_id => 1,
                    :assign_date => 11-11-2008}
-        assigns(:assignment).should be_a_new(Assignment)
+        assigns(:assignment).should be_nil
+        response.should redirect_to "where_i_came_from"
     end
 
   end
@@ -104,7 +118,7 @@ describe AssignmentsController do
   describe "GET edit" do
     it "assigns the requested assignment as @assignment" do
       Assignment.any_instance.stubs(:valid?).returns(true)
-      assignment = Assignment.create! valid_attributes
+      assignment = FactoryGirl.create(:assignment)
       get :edit, {:id => assignment.to_param}, valid_session
       assigns(:assignment).should eq(assignment)
     end
@@ -112,24 +126,14 @@ describe AssignmentsController do
 
   describe "PUT update" do
     describe "with valid params" do
-      it "updates the requested assignment" do
-        assignment = Assignment.create! valid_attributes
-        # Assuming there are no other users in the database, this
-        # specifies that the User created on the previous line
-        # receives the :update_attributes message with whatever params are
-        # submitted in the request.
-        Assignment.any_instance.expects(:update_attributes).with({'these' => 'params'})
-        put :update, {:id => assignment.to_param, :assignment => {'these' => 'params'}}, valid_session
-      end
-
       it "assigns the requested assignment as @assignment" do
-        assignment = Assignment.create! valid_attributes
-        put :update, {:id => assignment.to_param, :assignment => valid_attributes}, valid_session
+        assignment = FactoryGirl.create(:assignment)
+        put :update, {:id => assignment.to_param, :assignment => FactoryGirl.attributes_for(:assignment_date_only)}, valid_session
         assigns(:assignment).should eq(assignment)
       end
 
       it "redirects to the assignment" do
-        assignment = Assignment.create! valid_attributes
+        assignment = FactoryGirl.create(:assignment)
         put :update, {:id => assignment.to_param, :assignment => valid_attributes}, valid_session
         response.should redirect_to(assignment)
       end
@@ -137,18 +141,18 @@ describe AssignmentsController do
 
     describe "with invalid params" do
       it "assigns the assignment as @assignment" do
-        assignment = Assignment.create! valid_attributes
+        assignment = FactoryGirl.create(:assignment)
         # Trigger the behavior that occurs when invalid params are submitted
         Assignment.any_instance.stubs(:save).returns(false)
-        put :update, {:id => assignment.to_param, :assignment => {}}, valid_session
+        put :update, {:id => assignment.to_param, :assignment => FactoryGirl.attributes_for(:assignment_date_only)}, valid_session
         assigns(:assignment).should eq(assignment)
       end
 
       it "re-renders the 'edit' template" do
-        assignment = Assignment.create! valid_attributes
+        assignment = FactoryGirl.create(:assignment)
         # Trigger the behavior that occurs when invalid params are submitted
         Assignment.any_instance.stubs(:save).returns(false)
-        put :update, {:id => assignment.to_param, :assignment => {}}, valid_session
+        put :update, {:id => assignment.to_param, :assignment => FactoryGirl.attributes_for(:assignment)}, valid_session
         response.should render_template("edit")
       end
     end
@@ -156,23 +160,28 @@ describe AssignmentsController do
 
   describe "DELETE destroy" do
     it "destroys the requested user" do
-      assignment = Assignment.create! valid_attributes
+      assignment = FactoryGirl.create(:assignment)
       expect {
         delete :destroy, {:id => assignment.to_param}, valid_session
       }.to change(Assignment, :count).by(-1)
     end
 
     it "redirects to the users list" do
-      assignment = Assignment.create! valid_attributes
+      assignment = FactoryGirl.create(:assignment)
       delete :destroy, {:id => assignment.to_param}, valid_session
       response.should redirect_to(assignments_url)
+    end
+
+    it "fails if it is root (IT) assignment" do
+      pending "WIP"
+        assigns(:assignments).should have(1).Assignment
     end
   end
 
   describe "GET history" do
     it "assigns all assignments to @assignments" do
       Assignment.any_instance.stubs(:valid?).returns(true)
-      assignment = Assignment.create! valid_attributes
+      assignment = FactoryGirl.create(:assignment)
       get :history, {}, valid_session
       assigns(:assignments).should eq([assignment])
     end
